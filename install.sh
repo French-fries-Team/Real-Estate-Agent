@@ -98,6 +98,7 @@ setup_project() {
     fi
     
     # 创建Python虚拟环境
+    cd ../
     echo "正在创建Python虚拟环境..."
     uv venv --seed .venv --python 3.12
     
@@ -114,7 +115,7 @@ setup_project() {
 # 设置前端
 setup_frontend() {
     echo "🎨 设置前端..."
-    
+
     cd external/aiqtoolkit-opensource-ui
     
     echo "正在安装前端依赖..."

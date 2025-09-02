@@ -1,0 +1,15 @@
+.history/
+.idea/
+
+# install创建的，忽略提交
+start.sh
+stop.sh
+hackthon_config.yml
+
+# 依赖文件
+.venv/
+node_modules/
+
+
+# 无需提交文件
+NeMo-Agent-Toolkit/
