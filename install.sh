@@ -98,6 +98,7 @@ setup_project() {
     fi
     
     # 创建Python虚拟环境
+    cd ../
     echo "正在创建Python虚拟环境..."
     uv venv --seed .venv --python 3.12
     
@@ -114,7 +115,7 @@ setup_project() {
 # 设置前端
 setup_frontend() {
     echo "🎨 设置前端..."
-    
+
     cd external/aiqtoolkit-opensource-ui
     
     echo "正在安装前端依赖..."
@@ -146,12 +147,28 @@ functions:
     _type: current_datetime
     description: "获取当前日期和时间"
 
+  lianjia_scraper:
+    _type: lianjia_scraper
+    description: "采集链家房产API数据，可输出JSON格式"
+    # Default configuration for lianjia scraper
+    city: "sh"
+    max_requests: 5
+
+  json_fetch_tool:
+    _type: json_fetch_tool
+    description: "采集链家新房数据并导出 JSON 文件"
+    # Default configuration for JSON fetch tool
+    base_url: "https://sh.fang.lianjia.com/loupan/pg{page}/?_t=1/"
+    max_pages: 5
+    delay_seconds: 1.0
+    export_dir: "./data"
+
 llms:
   # 默认使用Bailian API (用户可修改)
   default_llm:
     _type: openai
     model_name: "qwen-plus"
-    api_key: "Your API Key"
+    api_key: "Your API KEY"
     base_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
     temperature: 0.7
     max_tokens: 2048
@@ -161,6 +178,8 @@ workflow:
   tool_names:
     - tavily_search
     - current_datetime
+    - lianjia_scraper
+    - json_fetch_tool
   llm_name: default_llm
   verbose: true
   parse_agent_response_max_retries: 3
@@ -182,7 +201,7 @@ echo "🚀 启动 NVIDIA NeMo Agent Toolkit AI对话机器人"
 echo "=============================================="
 
 # 设置环境变量
-export TAVILY_API_KEY=Your API Key
+export TAVILY_API_KEY=Your API KEY
 
 # 激活Python虚拟环境
 source .venv/bin/activate

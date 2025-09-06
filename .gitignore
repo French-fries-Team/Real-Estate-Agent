@@ -1,0 +1,69 @@
+.history/
+.idea/
+.vscode/
+.cursor/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# install创建的，忽略提交
+start.sh
+stop.sh
+hackthon_config.yml
+
+# 依赖文件
+.venv/
+node_modules/
+
+# 无需提交文件
+NeMo-Agent-Toolkit/
+
+# Build outputs
+build/
+dist/
+out/
+.next/
+
+# Log files
+*.log
+logs/
+
+# Environment variables
+.env
+.env.local
+
+# Temporary files
+.tmp/
+.temp/
+
+# Python cache and bytecode
+__pycache__/
+*.pyc
+
+# Database files
+*.db
+*.sqlite
+
+# Docker files
+.dockerignore
+
+# Package manager files
+uv.lock
+
+# Coverage reports
+coverage/
+
+# PID files
+*.pid
+
+# Vim swap and backup files
+*.swp
+*.bak
+
+# Data directory created by tools
+data/
+
+# Configuration files with sensitive information
+configs/hackathon_config.yml
+configs/tavily_mcp_config.yml

@@ -1,3 +1,10 @@
+'''
+Author: Westen
+Date: 2025-09-02 16:14:05
+LastEditors: your Name
+LastEditTime: 2025-09-04 20:58:59
+Description: 
+'''
 # SPDX-FileCopyrightText: Copyright (c) 2024-2025, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -24,6 +31,9 @@ from . import github_tools
 from . import nvidia_rag
 from . import retriever
 from . import server_tools
+from . import json_fetch_tool
+from . import lianjia_scraper_tool
+from . import custom_tool
 from .code_execution import register
 from .github_tools import create_github_commit
 from .github_tools import create_github_issue
