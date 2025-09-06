@@ -16,6 +16,12 @@ functions:
     _type: current_datetime
     description: "获取当前日期和时间"
 
+  chart_mcp:
+    _type: mcp_tool_wrapper
+    url: "http://localhost:1122/sse"
+    transport: "sse"
+    mcp_tool_name: generate_column_chart
+    description: "Returns a chart visualization"
 llms:
   # 默认使用Bailian API (用户可修改)
   default_llm:
@@ -31,6 +37,7 @@ workflow:
   tool_names:
     - internet_search
     - current_datetime
+    - chart_mcp
   llm_name: default_llm
   verbose: true
   parse_agent_response_max_retries: 3
