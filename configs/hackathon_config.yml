@@ -21,6 +21,22 @@ functions:
     _type: current_location
     description: "获取IP对应的地理位置信息"
 
+  lianjia_scraper:
+    _type: lianjia_scraper
+    description: "采集链家房产API数据，可输出JSON格式"
+    # Default configuration for lianjia scraper
+    city: "sh"
+    max_requests: 5
+   
+  json_fetch_tool:
+    _type: json_fetch_tool
+    description: "采集链家新房数据并导出 JSON 文件"
+    # Default configuration for JSON fetch tool
+    base_url: "https://sh.fang.lianjia.com/loupan/pg{page}/?_t=1/"
+    max_pages: 5
+    delay_seconds: 1.0
+    export_dir: "./data"
+
 llms:
   # 默认使用ModelScope API (用户可修改)
   default_llm:
@@ -36,6 +52,8 @@ workflow:
   tool_names:
     - ip_obtain
     - current_location
+    - lianjia_scraper
+    - json_fetch_tool
     # - tavily_search
     # - current_datetime
   llm_name: default_llm
