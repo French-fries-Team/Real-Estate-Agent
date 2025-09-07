@@ -27,7 +27,6 @@ functions:
     # Default configuration for lianjia scraper
     city: "sh"
     max_requests: 5
-   
   json_fetch_tool:
     _type: json_fetch_tool
     description: "采集链家新房数据并导出 JSON 文件"
@@ -36,6 +35,13 @@ functions:
     max_pages: 5
     delay_seconds: 1.0
     export_dir: "./data"
+
+  chart_mcp:
+    _type: mcp_tool_wrapper
+    url: "http://localhost:1122/sse"
+    transport: "sse"
+    mcp_tool_name: generate_column_chart
+    description: "Returns a chart visualization"
 
 llms:
   # 默认使用ModelScope API (用户可修改)
@@ -54,6 +60,7 @@ workflow:
     - current_location
     - lianjia_scraper
     - json_fetch_tool
+    - chart_mcp
     # - tavily_search
     # - current_datetime
   llm_name: default_llm

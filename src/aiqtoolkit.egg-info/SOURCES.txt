@@ -4,6 +4,9 @@ install.bat
 install.sh
 manifest.yaml
 pyproject.toml
+start.sh
+startmcp.sh
+stop.sh
 tavily_mcp_server.py
 uv.lock
 ci/markdown-link-check-config.json
