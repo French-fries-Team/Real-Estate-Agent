@@ -3,6 +3,16 @@
 echo "🛑 停止 NVIDIA NeMo Agent Toolkit AI对话机器人"
 echo "=============================================="
 
+# 停止 MCP 服务
+if [ -f .mcp.pid ]; then
+    MCP_PID=$(cat .mcp.pid)
+    if ps -p $MCP_PID > /dev/null; then
+        echo "停止 MCP 服务 (PID: $MCP_PID)..."
+        kill $MCP_PID
+    fi
+    rm -f .mcp.pid
+fi
+
 # 停止后端服务
 if [ -f .backend.pid ]; then
     BACKEND_PID=$(cat .backend.pid)
@@ -23,17 +33,8 @@ if [ -f .frontend.pid ]; then
     rm -f .frontend.pid
 fi
 
-# 停止 MCP 服务
-if [ -f .mcp.pid ]; then
-    MCP_PID=$(cat .mcp.pid)
-    if ps -p $MCP_PID > /dev/null; then
-        echo "停止 MCP 服务 (PID: $MCP_PID)..."
-        kill $MCP_PID
-    fi
-    rm -f .mcp.pid
-fi
-
 # 清理其他相关进程
+pkill -f "mcp-server-chart" 2>/dev/null || true
 pkill -f "aiq serve" 2>/dev/null || true
 pkill -f "next dev" 2>/dev/null || true
 
