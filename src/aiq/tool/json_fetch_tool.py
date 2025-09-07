@@ -87,20 +87,63 @@ async def json_fetch_tool(config: JsonFetchToolConfig, builder: Builder):
                     print(f"[ERROR] Failed to fetch page {page}: {e}")
                 await asyncio.sleep(config.delay_seconds)
 
+        # Generate timestamp for files
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        file_path = os.path.join(config.export_dir, f"lianjia_data_{timestamp}.json")
-
-        with open(file_path, "w", encoding="utf-8") as f:
+        
+        # Save raw data to JSON file
+        raw_data_file_path = os.path.join(config.export_dir, f"lianjia_data_{timestamp}.json")
+        with open(raw_data_file_path, "w", encoding="utf-8") as f:
             json.dump(all_data, f, ensure_ascii=False, indent=2)
 
+        # Convert to chart format
+        chart_data = []
+        for i, item in enumerate(all_data[:20]):  # Limit to first 20 items for chart
+            # Extract relevant fields for charting
+            title = item.get("title", f"Item {i+1}")
+            # 修复价格字段提取逻辑，使用正确的字段名
+            price = item.get("avg_unit_price", item.get("average_price", item.get("price", "0")))
+            
+            try:
+                value = int(price)
+            except (ValueError, TypeError):
+                value = 0
+                
+            # Add group based on price ranges
+            if value < 30000:
+                group = "低价位"
+            elif value < 50000:
+                group = "中价位"
+            else:
+                group = "高价位"
+                
+            chart_data.append({
+                "category": title,
+                "value": value,
+                "group": group
+            })
+        
+        # Save chart data to JSON file
+        chart_result = {
+            "data": chart_data,
+            "group": True,
+            "title": "链家新房价格数据",
+            "axisXTitle": "楼盘名称",
+            "axisYTitle": "均价(元/平)"
+        }
+        
+        chart_file_path = os.path.join(config.export_dir, f"lianjia_chart_data_{timestamp}.json")
+        with open(chart_file_path, "w", encoding="utf-8") as f:
+            json.dump(chart_result, f, ensure_ascii=False, indent=2)
+        
         return {
             "status": "success",
-            "file_path": file_path,
+            "raw_data_file_path": raw_data_file_path,
+            "chart_data_file_path": chart_file_path,
             "total_items": len(all_data),
             "preview": all_data[:2]  # 返回部分数据预览
         }
 
     yield FunctionInfo.from_fn(
         _fetch_and_export,
-        description="采集链家新房数据并导出为 JSON 文件，可配置页数和频次"
+        description="采集链家新房数据并导出为 JSON 文件，同时生成原始数据和图表格式数据"
     )
