@@ -171,26 +171,43 @@ def handle_mcp_exceptions(url_param: str = "url") -> Callable[..., Any]:
     """
 
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
-
         @wraps(func)
         async def wrapper(*args, **kwargs):
             try:
                 return await func(*args, **kwargs)
-            except MCPError:
-                # Re-raise MCPErrors as-is
-                raise
+            except MCPError as mcp_error:
+                # 处理 MCPError，返回格式错误提示但不抛出异常
+                error_message = f"数据格式错误: {str(mcp_error)}。请优化数据格式后重试。"
+                print(f"Caught MCPError: {mcp_error}")
+                # 返回一个包含错误信息的字典，而不是抛出异常
+                return {
+                    "status": "error",
+                    "message": error_message,
+                    "error_type": "MCPError",
+                    "suggestion": "请检查数据格式并重试"
+                }
             except Exception as e:
                 url = _extract_url(args, kwargs, url_param, func.__name__)
-
-                # Handle ExceptionGroup by extracting most relevant exception
-                if isinstance(e, ExceptionGroup):  # noqa: F821
+                
+                # 处理 ExceptionGroup
+                if isinstance(e, ExceptionGroup):
                     primary_exception = extract_primary_exception(list(e.exceptions))
                     mcp_error = convert_to_mcp_error(primary_exception, url)
                 else:
                     mcp_error = convert_to_mcp_error(e, url)
-
-                raise mcp_error from e
-
+                
+                # 记录错误但不抛出异常
+                error_message = f"处理过程中发生错误: {str(mcp_error)}。请稍后重试。"
+                print(f"Converted to MCPError: {mcp_error}")
+                
+                # 返回一个包含错误信息的字典，而不是抛出异常
+                return {
+                    "status": "error",
+                    "message": error_message,
+                    "error_type": "MCPError",
+                    "suggestion": "请稍后重试"
+                }
+        
         return wrapper
 
     return decorator
