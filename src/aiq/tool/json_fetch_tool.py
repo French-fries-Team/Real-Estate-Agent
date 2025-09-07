@@ -45,18 +45,44 @@ async def json_fetch_tool(config: JsonFetchToolConfig, builder: Builder):
     async def _fetch_and_export(unused: str) -> Dict:
         all_data: List[Dict] = []
         os.makedirs(config.export_dir, exist_ok=True)
+        
+        # Add headers to make request look more like a browser request
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+            "Accept": "application/json, text/plain, */*",
+            "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+            "Accept-Encoding": "gzip, deflate, br",
+            "Connection": "keep-alive"
+        }
 
         timeout = aiohttp.ClientTimeout(total=15)
-        async with aiohttp.ClientSession(timeout=timeout) as session:
+        async with aiohttp.ClientSession(timeout=timeout, headers=headers) as session:
             for page in range(1, config.max_pages + 1):
                 url = config.base_url.format(page=page)
                 try:
-                    async with session.get(url) as resp:
+                    async with session.get(url, allow_redirects=True) as resp:
                         resp.raise_for_status()
-                        data = await resp.json()
-                        # Fixed data parsing - the correct path is data["data"]["list"]
-                        if "data" in data and "list" in data["data"]:
-                            all_data.extend(data["data"]["list"])
+                        
+                        # Check content type before trying to parse as JSON
+                        content_type = resp.headers.get('content-type', '')
+                        if 'application/json' in content_type:
+                            data = await resp.json()
+                            # Fixed data parsing - the correct path is data["data"]["list"]
+                            if "data" in data and "list" in data["data"]:
+                                all_data.extend(data["data"]["list"])
+                        else:
+                            # Log warning when receiving non-JSON content
+                            print(f"[WARNING] Page {page} returned non-JSON content: {content_type}")
+                            # Try to parse as JSON anyway in case content-type is incorrect
+                            try:
+                                data = await resp.json()
+                                if "data" in data and "list" in data["data"]:
+                                    all_data.extend(data["data"]["list"])
+                            except Exception as json_error:
+                                print(f"[ERROR] Failed to parse JSON from page {page}: {json_error}")
+                                # Log response info for debugging
+                                text = await resp.text()
+                                print(f"[DEBUG] Response preview: {text[:200]}...")
                 except Exception as e:
                     print(f"[ERROR] Failed to fetch page {page}: {e}")
                 await asyncio.sleep(config.delay_seconds)
