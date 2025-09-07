@@ -8,8 +8,6 @@
 Thumbs.db
 
 # install创建的，忽略提交
-start.sh
-stop.sh
 hackthon_config.yml
 
 # 依赖文件

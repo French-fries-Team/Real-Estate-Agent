@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: aiqtoolkit-langchain
-Version: 1.2.0rc3.dev19+gdc80c2b
+Version: 0.1.dev11+g00f84f3f5.d20250906
 Summary: Subpackage for Langchain/Langgraph integration in AIQtoolkit
 Keywords: ai,rag,agents
 Classifier: Programming Language :: Python

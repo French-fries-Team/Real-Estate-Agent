@@ -163,6 +163,13 @@ functions:
     delay_seconds: 1.0
     export_dir: "./data"
 
+  chart_mcp:
+    _type: mcp_tool_wrapper
+    url: "http://localhost:1122/sse"
+    transport: "sse"
+    mcp_tool_name: generate_column_chart
+    description: "Returns a chart visualization"
+
 llms:
   # 默认使用Bailian API (用户可修改)
   default_llm:
@@ -180,6 +187,7 @@ workflow:
     - current_datetime
     - lianjia_scraper
     - json_fetch_tool
+    - chart_mcp
   llm_name: default_llm
   verbose: true
   parse_agent_response_max_retries: 3
@@ -317,4 +325,3 @@ main() {
 
 # 运行主函数
 main "$@"
-
